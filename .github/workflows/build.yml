@@ -34,7 +34,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
+
+      - name: Publish Test Summary
+        if: always()
+        run: python3 scripts/generate-test-summary.py ./TestResults/test-results.trx
 
       - name: Package
         run: dotnet pack src/GovUk.OneLogin.AspNetCore/ --configuration Release --no-build
