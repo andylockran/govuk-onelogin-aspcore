@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.4
+
+- Avoid initializing `CoreIdentityHelper` and fetching the DID document for authentication-only services.
+- Refactor `CoreIdentityHelper` to use `IHttpClientFactory` to prevent `ObjectDisposedException` across request lifecycles.
+- Add automated unit test suite and CI test execution.
+
 ## 0.4.3
 
 Increase `NonceLifetime` to one hour (from 15 minutes) to align with `RemoteAuthenticationTimeout`.

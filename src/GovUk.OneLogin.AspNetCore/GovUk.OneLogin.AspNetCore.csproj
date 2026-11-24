@@ -35,4 +35,9 @@
     <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="GovUk.OneLogin.AspNetCore.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
 </Project>

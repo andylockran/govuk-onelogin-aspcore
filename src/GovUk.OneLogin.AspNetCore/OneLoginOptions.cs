@@ -257,8 +257,11 @@ public class OneLoginOptions
             });
         }
 
-        _coreIdentityHelper ??= ActivatorUtilities.CreateInstance<CoreIdentityHelper>(context.HttpContext.RequestServices, this);
-        await _coreIdentityHelper.EnsureDidDocument();
+        if (IncludesCoreIdentityClaim)
+        {
+            _coreIdentityHelper ??= ActivatorUtilities.CreateInstance<CoreIdentityHelper>(context.HttpContext.RequestServices, this);
+            await _coreIdentityHelper.EnsureDidDocument();
+        }
     }
 
     private string CreateJwt(IDictionary<string, object> claims, Action<JsonWebTokenHandler>? configureHandler = null)

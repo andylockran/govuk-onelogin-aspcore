@@ -7,9 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GovUk.OneLogin.AspNetCore;
 
-internal sealed class CoreIdentityHelper : IDisposable
+internal sealed class CoreIdentityHelper
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly OneLoginOptions _options;
     private readonly ILogger<CoreIdentityHelper> _logger;
     private readonly JwtSecurityTokenHandler _tokenHandler;
@@ -17,13 +17,13 @@ internal sealed class CoreIdentityHelper : IDisposable
     private Did? _did;
     private DateTimeOffset? _didExpires;
 
-    public CoreIdentityHelper(HttpClient httpClient, OneLoginOptions options, ILogger<CoreIdentityHelper> logger)
+    public CoreIdentityHelper(IHttpClientFactory httpClientFactory, OneLoginOptions options, ILogger<CoreIdentityHelper> logger)
     {
-        ArgumentNullException.ThrowIfNull(httpClient);
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
         _options = options;
         _logger = logger;
 
@@ -32,8 +32,6 @@ internal sealed class CoreIdentityHelper : IDisposable
             MapInboundClaims = false
         };
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     internal ClaimsPrincipal ValidateCoreIdentity(string coreIdentityJwt)
     {
@@ -100,7 +98,8 @@ internal sealed class CoreIdentityHelper : IDisposable
         await _lock.WaitAsync();
         try
         {
-            var response = await _httpClient.GetAsync(endpoint);
+            var httpClient = _httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             DateTimeOffset? didDocumentExpires = null;
